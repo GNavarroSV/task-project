@@ -14,7 +14,7 @@ class UserSerializer(ModelSerializer):
 
 
 class TaskSerializer(ModelSerializer):
-    FK_ASIGNED_USER = UserSerializer()
+    #FK_ASIGNED_USER = UserSerializer()
     class Meta:
         model = Task
         fields = '__all__'
