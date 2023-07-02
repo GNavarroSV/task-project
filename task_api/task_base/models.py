@@ -14,5 +14,6 @@ class Task(models.Model):
     FK_ASIGNED_USER =  models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
     FC_DUE_DATE = models.DateField(null=False,)
     BN_COMPLETED = models.BooleanField(null=False, default=0)
+    BN_EXPIRED = models.BooleanField(null = False, default=0)
     class Meta:
             db_table = "task"

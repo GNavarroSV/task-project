@@ -31,6 +31,7 @@ def task_details(request, id):
         task.ST_TITLE = request.data['title']
         task.ST_DESCRIPTION = request.data['description']
         task.FC_DUE_DATE = request.data['due_date']
+        task.FK_ASIGNED_USER = request.data['asigned_user']
         task.save()
         serializer = TaskSerializer(task, many = False)
         return Response(serializer.data)
@@ -43,7 +44,8 @@ def add_task(request):
     task = Task.objects.create(
         ST_TITLE = request.data['title'],
         ST_DESCRIPTION = request.data['description'],
-        FC_DUE_DATE = request.data['due_date']
+        FC_DUE_DATE = request.data['due_date'],
+        FK_ASIGNED_USER = request.data['asigned_user']
     )
     serializer = TaskSerializer(task, many = False)
     return Response(serializer.data)
