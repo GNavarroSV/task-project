@@ -27,6 +27,7 @@ class TaskModel {
   String? stDescription;
   DateTime? fcDueDate;
   bool bnCompleted;
+  bool bnExpired;
 
   TaskModel({
     this.skTask,
@@ -35,16 +36,17 @@ class TaskModel {
     this.stDescription = '',
     this.fcDueDate,
     this.bnCompleted = false,
+    this.bnExpired = false,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
-        skTask: json["SK_TASK"],
-        fkAsignedUser: json["FK_ASIGNED_USER"],
-        stTitle: json["ST_TITLE"],
-        stDescription: json["ST_DESCRIPTION"],
-        fcDueDate: DateTime.parse(json["FC_DUE_DATE"]),
-        bnCompleted: json["BN_COMPLETED"],
-      );
+      skTask: json["SK_TASK"],
+      fkAsignedUser: json["FK_ASIGNED_USER"],
+      stTitle: json["ST_TITLE"],
+      stDescription: json["ST_DESCRIPTION"],
+      fcDueDate: DateTime.parse(json["FC_DUE_DATE"]),
+      bnCompleted: json["BN_COMPLETED"],
+      bnExpired: json["BN_EXPIRED"]);
 
   Map<String, dynamic> toJson() => {
         "SK_TASK": skTask,
@@ -54,5 +56,6 @@ class TaskModel {
         "FC_DUE_DATE":
             "${fcDueDate!.year.toString().padLeft(4, '0')}-${fcDueDate!.month.toString().padLeft(2, '0')}-${fcDueDate!.day.toString().padLeft(2, '0')}",
         "BN_COMPLETED": bnCompleted,
+        "BN_EXPIRED": bnExpired,
       };
 }

@@ -24,14 +24,17 @@ def task_list(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def task_details(request, id):
     task = Task.objects.get(SK_TASK = id)
+    
     if request.method == 'GET':
         serializer = TaskSerializer(task, many = False)
         return Response(serializer.data)
     if request.method == 'PUT':
-        task.ST_TITLE = request.data['title']
-        task.ST_DESCRIPTION = request.data['description']
-        task.FC_DUE_DATE = request.data['due_date']
-        task.FK_ASIGNED_USER = request.data['asigned_user']
+        if request.data['FK_ASIGNED_USER']:
+            user = User.objects.get(id = request.data['FK_ASIGNED_USER'])
+        task.ST_TITLE = request.data['ST_TITLE']
+        task.ST_DESCRIPTION = request.data['ST_DESCRIPTION']
+        task.FC_DUE_DATE = request.data['FC_DUE_DATE']
+        task.FK_ASIGNED_USER = user if user else None
         task.save()
         serializer = TaskSerializer(task, many = False)
         return Response(serializer.data)
@@ -41,18 +44,35 @@ def task_details(request, id):
 
 @api_view(['POST'])
 def add_task(request):
+    user = User.objects.get(id = request.data['FK_ASIGNED_USER'])
     task = Task.objects.create(
-        ST_TITLE = request.data['title'],
-        ST_DESCRIPTION = request.data['description'],
-        FC_DUE_DATE = request.data['due_date'],
-        FK_ASIGNED_USER = request.data['asigned_user']
+        ST_TITLE = request.data['ST_TITLE'],
+        ST_DESCRIPTION = request.data['ST_DESCRIPTION'],
+        FC_DUE_DATE = request.data['FC_DUE_DATE'],
+        FK_ASIGNED_USER = user,
     )
     serializer = TaskSerializer(task, many = False)
     return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def complete_task(request, id):
+    task = Task.objects.get(SK_TASK= id)
+    if request.method == 'PUT':
+        task.BN_COMPLETED = True
+        task.save()
+        return Response('Task completed')
 
 
 @api_view(['GET'])
 def user_list(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many = True)
+    return Response(serializer.data) 
+
+
+@api_view(['GET'])
+def user_details(request, id):
+    user = User.objects.get(id = id)
+    serializer = UserSerializer(user, many = False)
     return Response(serializer.data) 

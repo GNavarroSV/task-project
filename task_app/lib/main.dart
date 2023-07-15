@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/blocs/provider.dart';
 import 'package:task_app/src/pages/task_details_page.dart';
 import 'package:task_app/src/pages/task_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,7 +11,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return Provider(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
@@ -25,6 +27,9 @@ class MyApp extends StatelessWidget {
         routes: {
           'task': (context) => TaskPage(),
           'add_task': (context) => TaskDetailsPage(),
-        });
+        },
+        theme: ThemeData(primarySwatch: Colors.green),
+      ),
+    );
   }
 }

@@ -4,7 +4,8 @@ import 'package:task_app/src/models/task_model.dart';
 import 'package:http/http.dart' as http;
 
 class TaskProvider {
-  final String _url = "http://192.168.1.19:8000/api";
+  //final String _url = "http://192.168.1.19:8000/api";
+  final String _url = "http://172.27.105.51:8000/api";
 
   Future<List<TaskModel>> getTasks() async {
     final completeUrl = _url + '/task_list';
@@ -16,13 +17,69 @@ class TaskProvider {
     return tasks.items;
   }
 
-  // Future<String> addTask() async {
-  //   final competeUrl = _url + '/add_task';
+  Future<String> addTask(TaskModel task) async {
+    final completeUrl = _url + '/add_task';
+    final headers = {'Content-Type': 'application/json'};
+    final url = Uri.parse(completeUrl);
+    //Set the dynamic map to change the due date object type
+    Map<String, dynamic> taskData = task.toJson();
+    taskData['FC_DUE_DATE'] = taskData['FC_DUE_DATE'].toString();
+    //print(taskData['FK_ASIGNED_USER']);
+    //When adding headers, body must be a direct parameter
+    final body = jsonEncode(taskData);
+    final resp = await http.post(url, headers: headers, body: body);
+    if (resp.statusCode == 200) {
+      return ('Task added successfully');
+    } else {
+      throw Exception('Failed to add task');
+    }
+  }
 
-  //   if (response.statusCode == 201) {
-  //     print('Task added successfully');
-  //   } else {
-  //     throw Exception('Failed to add task');
-  //   }
-  // }
+  Future<String> editTask(TaskModel task) async {
+    final completeUrl = _url + '/task_details/' + task.skTask.toString();
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    final url = Uri.parse(completeUrl);
+
+    //Set the dynamic map to change the due date object type
+    Map<String, dynamic> taskData = task.toJson();
+    taskData['FC_DUE_DATE'] = taskData['FC_DUE_DATE'].toString();
+    // Add _method parameter to emulate PUT request
+    //taskData['method'] = 'PUT';
+    //When adding headers, body must be a direct parameter
+    final body = jsonEncode(taskData);
+    final resp = await http.put(url, headers: headers, body: body);
+    if (resp.statusCode == 200) {
+      return ('Task edited successfully');
+    } else {
+      print(resp.body);
+      throw Exception('Failed to edit task');
+    }
+  }
+
+  Future<String> deleteTask(TaskModel task) async {
+    final completeUrl = _url + '/task_details/' + task.skTask.toString();
+    final url = Uri.parse(completeUrl);
+    final resp = await http.delete(url);
+    if (resp.statusCode == 200) {
+      return ('Task deleted successfully');
+    } else {
+      throw Exception('Failed to delete task');
+    }
+  }
+
+  Future<String> completeTask(TaskModel task) async {
+    final completeUrl =
+        _url + '/task_details/completed/' + task.skTask.toString();
+
+    final url = Uri.parse(completeUrl);
+    final resp = await http.put(url);
+    if (resp.statusCode == 200) {
+      print('Task completed successfully');
+      return ('Task completed successfully');
+    } else {
+      throw Exception('Failed to complete task');
+    }
+  }
 }
