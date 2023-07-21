@@ -28,7 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.1.19',
-    '172.27.105.51'
+    '172.27.105.51',
+    'tekedafash.pythonanywhere.com'
 ]
 
 
