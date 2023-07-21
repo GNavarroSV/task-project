@@ -2,15 +2,21 @@ import 'dart:convert';
 
 import 'package:task_app/src/models/task_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:task_app/src/preferences/preferences.dart';
 
 class TaskProvider {
   //final String _url = "http://192.168.1.19:8000/api";
   final String _url = "http://172.27.105.51:8000/api";
+  final _prefs = UserPreferences();
 
   Future<List<TaskModel>> getTasks() async {
     final completeUrl = _url + '/task_list';
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${_prefs.accessToken}',
+    };
     final url = Uri.parse(completeUrl);
-    final resp = await http.get(url);
+    final resp = await http.get(url, headers: headers);
     final decodedData = json.decode(resp.body);
     //print(decodedData['results']);
     final tasks = Tasks.fromJsonList(decodedData);
@@ -19,7 +25,10 @@ class TaskProvider {
 
   Future<String> addTask(TaskModel task) async {
     final completeUrl = _url + '/add_task';
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${_prefs.accessToken}',
+    };
     final url = Uri.parse(completeUrl);
     //Set the dynamic map to change the due date object type
     Map<String, dynamic> taskData = task.toJson();
@@ -39,6 +48,7 @@ class TaskProvider {
     final completeUrl = _url + '/task_details/' + task.skTask.toString();
     final headers = {
       'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${_prefs.accessToken}',
     };
     final url = Uri.parse(completeUrl);
 
@@ -60,8 +70,12 @@ class TaskProvider {
 
   Future<String> deleteTask(TaskModel task) async {
     final completeUrl = _url + '/task_details/' + task.skTask.toString();
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${_prefs.accessToken}',
+    };
     final url = Uri.parse(completeUrl);
-    final resp = await http.delete(url);
+    final resp = await http.delete(url, headers: headers);
     if (resp.statusCode == 200) {
       return ('Task deleted successfully');
     } else {
@@ -72,9 +86,12 @@ class TaskProvider {
   Future<String> completeTask(TaskModel task) async {
     final completeUrl =
         _url + '/task_details/completed/' + task.skTask.toString();
-
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${_prefs.accessToken}',
+    };
     final url = Uri.parse(completeUrl);
-    final resp = await http.put(url);
+    final resp = await http.put(url, headers: headers);
     if (resp.statusCode == 200) {
       print('Task completed successfully');
       return ('Task completed successfully');

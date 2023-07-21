@@ -8,6 +8,10 @@ class Tasks {
   List<TaskModel> items = [];
   Tasks();
 
+  // static List<TaskModel> fromJsonList2(List<dynamic> jsonList) {
+  //   return jsonList.map((json) => TaskModel.fromJson(json)).toList();
+  // }
+
   Tasks.fromJsonList(List<dynamic> jsonList) {
     if (jsonList == null) return;
     for (final item in jsonList) {

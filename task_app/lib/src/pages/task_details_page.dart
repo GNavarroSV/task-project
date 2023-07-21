@@ -5,6 +5,7 @@ import 'package:task_app/src/models/task_model.dart';
 import 'package:task_app/src/models/user_model.dart';
 import 'package:task_app/src/providers/task_provider.dart';
 import 'package:task_app/src/providers/user_provider.dart';
+import 'package:task_app/src/utils/utils.dart' as utils;
 
 class TaskDetailsPage extends StatefulWidget {
   const TaskDetailsPage({super.key});
@@ -89,13 +90,7 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
         hintText: 'Title',
         helperText: 'Task Title',
       ),
-      validator: (value) {
-        if (value!.length < 0 || value.length > 200) {
-          return 'The title can not be longer than 25 characters';
-        } else {
-          return null;
-        }
-      },
+      validator: utils.lengthValidator.validate,
       onChanged: (value) => task.stTitle = value,
     );
   }
@@ -108,16 +103,10 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         icon: Icon(Icons.text_fields_outlined),
-        hintText: 'Title',
+        hintText: 'Description',
         helperText: 'Task Description',
       ),
-      validator: (value) {
-        if (value!.length < 0 || value.length > 200) {
-          return 'The description can not be longer that 200 characters';
-        } else {
-          return null;
-        }
-      },
+      validator: utils.lengthValidator.validate,
       onChanged: (value) => task.stDescription = value,
     );
   }
@@ -167,25 +156,6 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
     }
   }
 
-  // Widget _createAsignation() {
-  //   return Row(
-  //     children: [
-  //       Icon(Icons.select_all),
-  //       SizedBox(width: 30.0),
-  //       Expanded(
-  //         child: DropdownButton(
-  //           value: _defaultDropdpwn,
-  //           items: getOptionsDropdown(),
-  //           onChanged: (value) {
-  //             setState(() {
-  //               _defaultDropdpwn = value!;
-  //             });
-  //           },
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
   Widget _createAsignation() {
     if (task.bnCompleted) {
       return _createAsignationCompleted();
