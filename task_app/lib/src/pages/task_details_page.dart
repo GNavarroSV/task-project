@@ -28,16 +28,34 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
   int? _selectedOption;
   bool _guardando = false;
 
+  bool userOptionsLoaded = false;
+
+  List<DropdownMenuItem<String>> userOptions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user options.
+    fetchUserOptions();
+  }
+
+  void fetchUserOptions() async {
+    List<DropdownMenuItem<String>> options = await getOptionsDropdown();
+    setState(() {
+      userOptions = options;
+      userOptionsLoaded = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     taskBloc = Provider.taskBloc(context);
-    final TaskModel taskData =
-        ModalRoute.of(context)?.settings.arguments as TaskModel;
+    final dynamic taskData = ModalRoute.of(context)?.settings.arguments;
 
     //Set task data if arguments is not empty
     //by doing this, we can check if we are
     //adding a task or editing it
-    if (taskData != null) {
+    if (taskData is TaskModel) {
       task = taskData;
       _DateController.text = task.fcDueDate.toString();
       _defaultDropdown = task.fkAsignedUser.toString();
@@ -101,7 +119,7 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
       autovalidateMode: AutovalidateMode.always,
       enabled: !task.bnCompleted,
       textCapitalization: TextCapitalization.sentences,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         icon: Icon(Icons.text_fields_outlined),
         hintText: 'Description',
         helperText: 'Task Description',
@@ -123,10 +141,10 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
         helperText: (task.bnExpired)
             ? 'Task is expired, select a new due date'
             : 'Due date',
-        icon: Icon(Icons.calendar_month_outlined),
+        icon: const Icon(Icons.calendar_month_outlined),
       ),
       onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
+        FocusScope.of(context).requestFocus(FocusNode());
         _selectDate(context);
       },
       validator: (value) {
@@ -146,7 +164,7 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
         initialDate: DateTime.now(),
         firstDate: DateTime(2023, actualDate.month, actualDate.day),
         lastDate: DateTime(2026),
-        locale: Locale('es', 'ES'));
+        locale: const Locale('es', 'ES'));
     if (picked != null) {
       setState(() {
         _date = picked.toString();
@@ -160,38 +178,30 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
     if (task.bnCompleted) {
       return _createAsignationCompleted();
     } else {
-      return FutureBuilder<List<DropdownMenuItem<String>>>(
-        future: getOptionsDropdown(),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<DropdownMenuItem<String>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          return Row(
-            children: [
-              Icon(Icons.person),
-              SizedBox(width: 15.0),
-              Expanded(
-                child: DropdownButtonFormField(
-                  value: _defaultDropdown,
-                  items: snapshot.data,
-                  onChanged: (value) {
-                    setState(() {
-                      _defaultDropdown = value!;
-                      task.fkAsignedUser = int.parse(_defaultDropdown!);
-                    });
-                  },
-                  validator: (value) => value == null ? "Select a user" : null,
-                ),
-              )
-            ],
-          );
-        },
-      );
+      if (!userOptionsLoaded) {
+        // Loading user options, show loading indicator or placeholder.
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return Row(
+          children: [
+            const Icon(Icons.person),
+            const SizedBox(width: 15.0),
+            Expanded(
+              child: DropdownButtonFormField(
+                value: _defaultDropdown,
+                items: userOptions,
+                onChanged: (value) {
+                  setState(() {
+                    _defaultDropdown = value!;
+                    task.fkAsignedUser = int.parse(_defaultDropdown!);
+                  });
+                },
+                validator: (value) => value == null ? "Select a user" : null,
+              ),
+            ),
+          ],
+        );
+      }
     }
   }
 
@@ -199,14 +209,14 @@ class _TaskDetailsState extends State<TaskDetailsPage> {
     List<UserModel> users = await userProvider.getUsers();
     List<DropdownMenuItem<String>> userOptions = [];
 
-    users.forEach((user) {
+    for (var user in users) {
       userOptions.add(
         DropdownMenuItem(
           child: Text(user.username),
           value: user.id.toString(),
         ),
       );
-    });
+    }
 
     return userOptions;
   }

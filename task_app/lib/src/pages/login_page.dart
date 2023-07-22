@@ -5,8 +5,7 @@ import 'package:task_app/src/providers/user_provider.dart';
 import 'package:task_app/src/utils/utils.dart' as utils;
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
+  bool _loading = false;
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -123,8 +122,9 @@ class _LoginPageState extends State<LoginPage> {
                 backgroundColor: Colors.green,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0))),
-            onPressed:
-                snapshot.hasData ? () => _login(loginBloc, context) : null,
+            onPressed: (snapshot.hasData && !widget._loading)
+                ? () => _login(loginBloc, context)
+                : null,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
               child: Text('Login'),
@@ -134,6 +134,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _login(LoginBloc bloc, context) async {
+    setState(() {
+      widget._loading = true;
+    });
     Map<String, dynamic> info =
         await userProvider.login(bloc.email, bloc.password);
     if (info['authenticated']) {
@@ -141,6 +144,9 @@ class _LoginPageState extends State<LoginPage> {
       bloc.changePassword('');
       bloc.changeUsername('');
     } else {
+      setState(() {
+        widget._loading = false;
+      });
       utils.showAlert(context, 'Authentication Failed',
           'Username or password are incorrect');
     }

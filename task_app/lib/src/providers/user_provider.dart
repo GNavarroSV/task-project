@@ -9,7 +9,8 @@ import 'package:task_app/src/utils/utils.dart';
 class UserProvider {
   final _prefs = UserPreferences();
   //final String _url = "http://192.168.1.19:8000/api";
-  final String _url = "http://172.27.105.51:8000/api";
+  //final String _url = "http://172.27.105.51:8000/api";
+  final String _url = "https://navarrooo.pythonanywhere.com/api";
 
   Future<List<UserModel>> getUsers() async {
     final completeUrl = _url + '/user_list';
@@ -53,7 +54,7 @@ class UserProvider {
     final Map<String, dynamic> responseData = json.decode(resp.body);
 
     if (responseData['status'] == 'User authenticated') {
-      getToken(username, password);
+      await getToken(username, password);
       _prefs.username = username;
       return {'authenticated': true};
     } else {
@@ -90,7 +91,6 @@ class UserProvider {
     if (resp.statusCode == 200) {
       _prefs.accessToken = encodedData['access'];
       _prefs.refreshToken = encodedData['refresh'];
-      print(encodedData);
       return encodedData;
     } else {
       return {'status': 'token expired'};

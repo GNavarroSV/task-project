@@ -6,7 +6,8 @@ import 'package:task_app/src/preferences/preferences.dart';
 
 class TaskProvider {
   //final String _url = "http://192.168.1.19:8000/api";
-  final String _url = "http://172.27.105.51:8000/api";
+  //final String _url = "http://172.27.105.51:8000/api";
+  final String _url = "https://navarrooo.pythonanywhere.com/api";
   final _prefs = UserPreferences();
 
   Future<List<TaskModel>> getTasks() async {

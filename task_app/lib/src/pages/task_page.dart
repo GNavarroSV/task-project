@@ -154,7 +154,12 @@ class TaskPage extends StatelessWidget {
       },
       child: ListTile(
         title: Text(task.stTitle as String),
-        subtitle: Text(task.stDescription as String),
+        subtitle: Text(
+          task.stDescription as String,
+          style: TextStyle(
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         trailing: utils.getIcon(task),
         onTap: () {
           Navigator.pushNamed(context, 'add_task', arguments: task);
