@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           const Locale('en', 'US'),
           const Locale('es', 'ES'),
         ],
-        title: 'Material App',
+        title: 'TaskFlow App',
         initialRoute: 'login',
         routes: {
           'login': (context) => LoginPage(),
